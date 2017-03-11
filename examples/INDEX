@@ -1,0 +1,3 @@
+This folder will include example usages for each of the solvers in this package, and for the boundary conditions available.
+
+Some examples will be given with results ready included, some with simulations ready to be run and some with Gmsh or blockmesh models that still need to be converted, to help a new user learn the full process, from designing a model through to building an OpenFOAM case and finally to viewing results in Paraview.

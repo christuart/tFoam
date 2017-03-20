@@ -6,7 +6,7 @@
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
-    This file is part of OpenFOAM.
+    This file is part of tFoam, a project implemented using OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -22,10 +22,10 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    icoTempFoam
+    tRegionDecayFoam
 
 Description
-    Transient solver for incompressible, laminar flow of Newtonian fluids.
+    Transient solver for multi-zone tritium diffusion and radioactive decay.
 
 \*---------------------------------------------------------------------------*/
 
@@ -40,10 +40,7 @@ int main(int argc, char *argv[])
     #include "createTime.H"
     #include "createMesh.H"
 
-    //simpleControl simple(mesh);
-
     #include "createFields.H"
-    //#include "initContinuityErrs.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -52,35 +49,17 @@ int main(int argc, char *argv[])
     while (runTime.loop())
     {
         Info<< "Time = " << runTime.timeName() << nl << endl;
-
-        //#include "CourantNo.H"
-
-
-        // --- PISO loop
-        //while (simple.correctNonOrthogonal())
-        {
-            Info << "Running the solver loop!!!" << endl;
-            //#include "continuityErrs.H"
-            fvScalarMatrix TEqn
-            (
-                fvm::ddt(T)
-              + lambda*T
-              - fvm::laplacian(D, T)
-            );
-            Info << "Got past the definition of TEqn" << endl;
             
-            TEqn.relax();
-            
-            Info << "Relaxed TEqn" << endl;
-            
-            solve(TEqn);
-            
-            Info << "Solved TEqn" << endl;
-            
-            T.correctBoundaryConditions();
-            
-            Info << "Corrected boundary conditions for T" << endl;
-        }
+		fvScalarMatrix TEqn
+		(
+			fvm::ddt(T)
+		  + lambda*T
+		  - fvm::laplacian(D, T)
+		);
+		
+		TEqn.relax();
+		solve(TEqn);
+		T.correctBoundaryConditions();
 
         runTime.write();
 

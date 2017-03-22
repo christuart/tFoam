@@ -50,19 +50,19 @@ int main(int argc, char *argv[])
     while (runTime.loop())
     {
         Info<< "Time = " << runTime.timeName() << nl << endl;
-            
-        D = D0 * exp( -Q/(R*T) );
         
-		fvScalarMatrix TEqn
-		(
-			fvm::ddt(C_T)
-		  + lambda*C_T
-		  - fvm::laplacian(D, C_T)
-		);
-		
-		TEqn.relax();
-		solve(TEqn);
-		C_T.correctBoundaryConditions();
+        #include "calculateDiffusivity.H"
+        
+	fvScalarMatrix TEqn
+	(
+	    fvm::ddt(C_T)
+	  + lambda*C_T
+	  - fvm::laplacian(D, C_T)
+	);
+	
+	TEqn.relax();
+	solve(TEqn);
+	C_T.correctBoundaryConditions();
 
         runTime.write();
 

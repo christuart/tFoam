@@ -63,7 +63,7 @@ SourceFiles
 #define tritiumGradientFvPatchField_H
 
 #include "fixedGradientFvPatchFields.H"
-#include "Function1.H"
+//#include "Function1.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -90,7 +90,7 @@ private:
     // Private data
 
         //- Gradient
-        autoPtr<Function1<scalar>> uniformGradient_;
+//        autoPtr<Function1<scalar> > uniformGradient_;
         
         //- Outgassing Coefficient / [kg/m2s / (kg/m2)^0.74]
         scalarField o_;
@@ -156,9 +156,9 @@ public:
         );
 
         //- Construct and return a clone
-        virtual tmp<fvPatchField<scalar>> clone() const
+        virtual tmp<fvPatchField<scalar> > clone() const
         {
-            return tmp<fvPatchField<scalar>>
+            return tmp<fvPatchField<scalar> >
             (
                 new tritiumGradientFvPatchScalarField(*this)
             );
@@ -172,12 +172,12 @@ public:
         );
 
         //- Construct and return a clone setting internal field reference
-        virtual tmp<fvPatchField<scalar>> clone
+        virtual tmp<fvPatchField<scalar> > clone
         (
             const DimensionedField<scalar, volMesh>& iF
         ) const
         {
-            return tmp<fvPatchField<scalar>>
+            return tmp<fvPatchField<scalar> >
             (
                 new tritiumGradientFvPatchScalarField(*this, iF)
             );

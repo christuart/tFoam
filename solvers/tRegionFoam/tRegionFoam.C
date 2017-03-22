@@ -50,16 +50,16 @@ int main(int argc, char *argv[])
     {
         Info<< "Time = " << runTime.timeName() << nl << endl;
             
-		fvScalarMatrix TEqn
-		(
-			fvm::ddt(T)
-		  - fvm::laplacian(D, T)
-		);
-		
-		TEqn.relax();
-		solve(TEqn);
-		T.correctBoundaryConditions();
-
+        fvScalarMatrix TEqn
+        (
+            fvm::ddt(T)
+          - fvm::laplacian(D, T)
+        );
+        
+        TEqn.relax();
+        solve(TEqn);
+        T.correctBoundaryConditions();
+        
         runTime.write();
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"

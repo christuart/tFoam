@@ -53,24 +53,18 @@ int main(int argc, char *argv[])
     while (runTime.loop())
     {
         Info<< "Time = " << runTime.timeName() << nl << endl;
-            
-        D = D0 * exp( -Q/(R*T) );
         
-		fvScalarMatrix TEqn
-		(
-			fvm::ddt(C_T)
-		  - fvm::laplacian(D, C_T)
-		);
-		
-		TEqn.relax();
-		solve(TEqn);
-		C_T.correctBoundaryConditions();
-		
-		//tritiumGradientFvPatchScalarField tritiumPatchFieldI = C_T.boundaryField().patch[0];
-		//forAll(C_T.boundaryField(),I) {
-		//	tritiumGradientFvPatchScalarField& tritiumPatchFieldI = C_T.boundaryField()[I]
-		//	flux.boundaryField()[I] = tritiumPathFieldI.flux;
-		//flux
+        #include "calculateDiffusivity.H"
+        
+        fvScalarMatrix TEqn
+        (
+            fvm::ddt(C_T)
+          - fvm::laplacian(D, C_T)
+        );
+        		
+        TEqn.relax();
+        solve(TEqn);
+        C_T.correctBoundaryConditions();
 
         runTime.write();
 

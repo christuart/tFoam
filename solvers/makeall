@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cd tDiffFoam ; wclean ; wmake ; cd ..
+cd tDecayFoam ; wclean ; wmake ; cd ..
+cd tRegionFoam ; wclean ; wmake ; cd ..
+cd tRegionDecayFoam ; wclean ; wmake ; cd ..
+cd tVaryFoam ; wclean ; wmake ; cd ..
+cd tVaryDecayFoam ; wclean ; wmake ; cd ..

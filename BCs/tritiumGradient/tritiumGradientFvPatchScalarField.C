@@ -36,7 +36,7 @@ Foam::tritiumGradientFvPatchScalarField::tritiumGradientFvPatchScalarField
 )
 :
     fixedGradientFvPatchScalarField(p, iF),
-    uniformGradient_(),
+//    uniformGradient_(),
     o_(p.size(), 1.23e-4),
     n_(p.size(), 0.74),
     delta_(p.size(), 3e-10)
@@ -66,7 +66,7 @@ Foam::tritiumGradientFvPatchScalarField::tritiumGradientFvPatchScalarField
 )
 :
     fixedGradientFvPatchField<scalar>(p, iF),
-    uniformGradient_(Function1<scalar>::New("uniformGradient", dict)),
+//    uniformGradient_(Function1<scalar>::New("uniformGradient", dict)),
     /*mode_(unknown),
     q_(p.size(), 0.0),
     h_(p.size(), 0.0),
@@ -99,8 +99,8 @@ Foam::tritiumGradientFvPatchScalarField::tritiumGradientFvPatchScalarField
             << "\n patch type '" << p.type()
             << "' either o (coefficient) or n (exponent) or delta were not found '"
             << "\n for patch " << p.name()
-            << " of field " << this->internalField().name()
-            << " in file " << this->internalField().objectPath()
+//            << " of field " << this->internalField().name()
+//            << " in file " << this->internalField().objectPath()
             << "\n typical default values are: 1.23e-4; 0.74; 3e-10"
             << exit(FatalError);
     }
@@ -116,8 +116,8 @@ Foam::tritiumGradientFvPatchScalarField::tritiumGradientFvPatchScalarField
     const fvPatchFieldMapper& mapper
 )
 :
-    fixedGradientFvPatchField<scalar>(ptf, p, iF, mapper),
-    uniformGradient_(ptf.uniformGradient_, false)
+    fixedGradientFvPatchField<scalar>(ptf, p, iF, mapper)/*,
+    uniformGradient_(ptf.uniformGradient_, false)*/
 {
 	Info << "Executing constructor number 2" << endl;}
 
@@ -127,8 +127,8 @@ Foam::tritiumGradientFvPatchScalarField::tritiumGradientFvPatchScalarField
     const tritiumGradientFvPatchScalarField& ptf
 )
 :
-    fixedGradientFvPatchField<scalar>(ptf),
-    uniformGradient_(ptf.uniformGradient_, false)
+    fixedGradientFvPatchField<scalar>(ptf)/*,
+    uniformGradient_(ptf.uniformGradient_, false)*/
 {
 	Info << "Executing constructor number 3" << endl;}
 
@@ -140,7 +140,7 @@ Foam::tritiumGradientFvPatchScalarField::tritiumGradientFvPatchScalarField
 )
 :
     fixedGradientFvPatchField<scalar>(ptf, iF),
-    uniformGradient_(ptf.uniformGradient_, false),
+//    uniformGradient_(ptf.uniformGradient_, false),
     o_(ptf.o_),
     n_(ptf.n_),
     delta_(ptf.delta_),
@@ -148,10 +148,10 @@ Foam::tritiumGradientFvPatchScalarField::tritiumGradientFvPatchScalarField
 {
 	Info << "Executing constructor number 4" << endl;
     // Evaluate the profile if defined
-    if (ptf.uniformGradient_.valid())
+/*    if (ptf.uniformGradient_.valid())
     {
         this->evaluate();
-    }
+    }*/
 }
 
 
@@ -166,7 +166,7 @@ void Foam::tritiumGradientFvPatchScalarField::updateCoeffs()
 
 	//Info << "We have reached updateCoeffs() of the tritiumGradient boundary!" << endl;
 	
-    const scalar t = this->db().time().timeOutputValue();
+//    const scalar t = this->db().time().timeOutputValue();
     //this->gradient() = uniformGradient_->value(t);
     this->gradient() = n_;
     //Info << (Field<scalar>&(this->patchInternalField()).size()) << " vs " << n_.size() << endl;
@@ -183,7 +183,7 @@ void Foam::tritiumGradientFvPatchScalarField::updateCoeffs()
 void Foam::tritiumGradientFvPatchScalarField::write(Ostream& os) const
 {
     fixedGradientFvPatchField<scalar>::write(os);
-    uniformGradient_->writeData(os);
+//    uniformGradient_->writeData(os);
     this->writeEntry("value", os);
 }
 

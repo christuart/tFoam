@@ -1,7 +1,8 @@
-//scalar R(8.31446);
+//Set the universal gas constant, in [kJ]/[kMol K]
+//scalar R(0.00831446);
 dimensionedScalar R
 (
     "R",
     dimensionSet(0, 0, 0, -1, 0, 0, 0),
-    8.31446
+    0.00831446
 );

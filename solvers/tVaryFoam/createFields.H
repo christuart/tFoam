@@ -70,6 +70,34 @@ volScalarField T
     mesh
 );
 
+Info<< "Reading flux tracking fields store and flux\n" << endl;
+volScalarField store
+(
+    IOobject
+    (
+        "store",
+        runTime.timeName(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh,
+    dimensionedScalar("store", dimless, 0.0)
+);
+volScalarField flux
+(
+    IOobject
+    (
+        "flux",
+        runTime.timeName(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh,
+    dimensionedScalar("flux", dimless, 0.0)
+);
+
 label C_TRefCell = 0;
 scalar C_TRefValue = 1.0;
 setRefCell(C_T, mesh.solutionDict().subDict("SIMPLE"), C_TRefCell, C_TRefValue);

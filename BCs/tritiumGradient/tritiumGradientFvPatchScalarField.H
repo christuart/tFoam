@@ -82,6 +82,9 @@ class tritiumGradientFvPatchScalarField
 public:
 
     // Public data
+		
+		scalarField store;
+		scalarField flux;
 
 private:
     // Private data
@@ -100,6 +103,8 @@ private:
         
         //- Recalculated coefficient / [kg/m2s / (kg/m3)^0.74]
 		scalarField r_;
+		
+		const word DName_;
 
 public:
 

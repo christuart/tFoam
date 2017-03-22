@@ -25,6 +25,9 @@ License
 
 #include "tritiumGradientFvPatchScalarField.H"
 #include "addToRunTimeSelectionTable.H"
+#include "fvPatchFieldMapper.H"
+#include "surfaceFields.H"
+#include "volFields.H"
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -36,10 +39,13 @@ Foam::tritiumGradientFvPatchScalarField::tritiumGradientFvPatchScalarField
 )
 :
     fixedGradientFvPatchScalarField(p, iF),
+    store(p.size(), 0.0),
+    flux(p.size(), 0.0),
     uniformGradient_(),
     o_(p.size(), 1.23e-4),
     n_(p.size(), 0.74),
-    delta_(p.size(), 3e-10)
+    delta_(p.size(), 3e-10),
+    DName_("D")
 {
 	r_ = o_*pow(delta_,n_);
 }
@@ -66,7 +72,6 @@ Foam::tritiumGradientFvPatchScalarField::tritiumGradientFvPatchScalarField
 )
 :
     fixedGradientFvPatchField<scalar>(p, iF),
-    uniformGradient_(Function1<scalar>::New("uniformGradient", dict)),
     /*mode_(unknown),
     q_(p.size(), 0.0),
     h_(p.size(), 0.0),
@@ -76,10 +81,14 @@ Foam::tritiumGradientFvPatchScalarField::tritiumGradientFvPatchScalarField
     QrName_(dict.lookupOrDefault<word>("Qr", "none")),
     thicknessLayers_(),
     kappaLayers_()*/
+    store(p.size(), 0.0),
+    flux(p.size(), 0.0),
+    uniformGradient_(Function1<scalar>::New("uniformGradient", dict)),
     o_(p.size(), 0.0),
     n_(p.size(), 0.0),
     delta_(p.size(), 0.0),
-    r_(p.size(), 0.0)
+    r_(p.size(), 0.0),
+    DName_("D")
 {
 	Info << "Executing constructor number 1" << endl;
     if (dict.found("coefficient") && dict.found("exponent") && dict.found("delta"))
@@ -140,11 +149,14 @@ Foam::tritiumGradientFvPatchScalarField::tritiumGradientFvPatchScalarField
 )
 :
     fixedGradientFvPatchField<scalar>(ptf, iF),
+    store(ptf.store),
+    flux(ptf.flux),
     uniformGradient_(ptf.uniformGradient_, false),
     o_(ptf.o_),
     n_(ptf.n_),
     delta_(ptf.delta_),
-    r_(ptf.r_)
+    r_(ptf.r_),
+    DName_(ptf.DName_)
 {
 	Info << "Executing constructor number 4" << endl;
     // Evaluate the profile if defined
@@ -166,15 +178,23 @@ void Foam::tritiumGradientFvPatchScalarField::updateCoeffs()
 
 	//Info << "We have reached updateCoeffs() of the tritiumGradient boundary!" << endl;
 	
-    const scalar t = this->db().time().timeOutputValue();
+    //const scalar t = this->db().time().timeOutputValue();
     //this->gradient() = uniformGradient_->value(t);
-    this->gradient() = n_;
+    //this->gradient() = n_;
     //Info << (Field<scalar>&(this->patchInternalField()).size()) << " vs " << n_.size() << endl;
 	//Info << "We set the gradient to the wrong thing!" << endl;
     //this->gradient() = pow(this->patchInternalField(),n_);
 	//Info << "We set the gradient to another a a wrong thing!" << endl;
-    this->gradient() = r_ * pow(this->patchInternalField(),n_);
-	//Info << "Managed to set a gradient once, now calling upwards updateCoeffs()" << endl;
+	
+    //const fvPatchField<scalar>& pp =
+    //    patch().lookupPatchField<volScalarField, scalar>(pName_);
+        
+    const fvPatchField<scalar>& D =
+        patch().lookupPatchField<volScalarField, scalar>(DName_);
+    flux = (r_ * pow(this->patchInternalField(),n_));
+    //fvPatchField<scalar>& fluxField = 
+    //    patch().lookupPatchField<volScalarField, scalar>("flux");
+    this->gradient() = flux / D;
 
     fixedGradientFvPatchField<scalar>::updateCoeffs();
 }
@@ -185,6 +205,8 @@ void Foam::tritiumGradientFvPatchScalarField::write(Ostream& os) const
     fixedGradientFvPatchField<scalar>::write(os);
     uniformGradient_->writeData(os);
     this->writeEntry("value", os);
+    flux.writeEntry("flux", os);
+    store.writeEntry("store", os);
 }
 
 

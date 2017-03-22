@@ -32,6 +32,9 @@ Description
 
 #include "fvCFD.H"
 #include "simpleControl.H"
+#include "tritiumGradientFvPatchScalarField.H"
+//#include "GeometricField.H"
+//#include "GeometricBoundaryField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -62,6 +65,12 @@ int main(int argc, char *argv[])
 		TEqn.relax();
 		solve(TEqn);
 		C_T.correctBoundaryConditions();
+		
+		//tritiumGradientFvPatchScalarField tritiumPatchFieldI = C_T.boundaryField().patch[0];
+		//forAll(C_T.boundaryField(),I) {
+		//	tritiumGradientFvPatchScalarField& tritiumPatchFieldI = C_T.boundaryField()[I]
+		//	flux.boundaryField()[I] = tritiumPathFieldI.flux;
+		//flux
 
         runTime.write();
 

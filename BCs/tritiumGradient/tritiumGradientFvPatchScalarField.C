@@ -45,8 +45,10 @@ Foam::tritiumGradientFvPatchScalarField::tritiumGradientFvPatchScalarField
     o_(p.size(), 1.23e-4),
     n_(p.size(), 0.74),
     delta_(p.size(), 3e-10),
-    DName_("D")
+    DName_("D"),
+    timeStoreLastUpdated(-1.0)
 {
+	Info << "Executing constructor number 0" << endl;
 	r_ = o_*pow(delta_,n_);
 }
 
@@ -88,7 +90,8 @@ Foam::tritiumGradientFvPatchScalarField::tritiumGradientFvPatchScalarField
     n_(p.size(), 0.0),
     delta_(p.size(), 0.0),
     r_(p.size(), 0.0),
-    DName_("D")
+    DName_("D"),
+    timeStoreLastUpdated(-1.0)
 {
 	Info << "Executing constructor number 1" << endl;
     if (dict.found("coefficient") && dict.found("exponent") && dict.found("delta"))
@@ -113,6 +116,7 @@ Foam::tritiumGradientFvPatchScalarField::tritiumGradientFvPatchScalarField
             << "\n typical default values are: 1.23e-4; 0.74; 3e-10"
             << exit(FatalError);
     }
+	Info << "This is what is re-evaluating" << endl;
     this->evaluate();
 }
 
@@ -156,7 +160,8 @@ Foam::tritiumGradientFvPatchScalarField::tritiumGradientFvPatchScalarField
     n_(ptf.n_),
     delta_(ptf.delta_),
     r_(ptf.r_),
-    DName_(ptf.DName_)
+    DName_(ptf.DName_),
+    timeStoreLastUpdated(ptf.timeStoreLastUpdated)
 {
 	Info << "Executing constructor number 4" << endl;
     // Evaluate the profile if defined
@@ -195,7 +200,11 @@ void Foam::tritiumGradientFvPatchScalarField::updateCoeffs()
     const label patchID = mesh.boundaryMesh().findPatchID(this->patch().name());
     flux = (r_ * pow(this->patchInternalField(),n_));
     const scalar timeStep = this->db().time().deltaTValue();
-    store = store + flux * mesh.magSf().boundaryField()[patchID] * timeStep;
+    if (timeStoreLastUpdated != this->db().time().timeOutputValue())
+    {
+        timeStoreLastUpdated = this->db().time().timeOutputValue();
+        store = store + flux * mesh.magSf().boundaryField()[patchID] * timeStep;
+    }
     //fvPatchField<scalar>& fluxField = 
     //    patch().lookupPatchField<volScalarField, scalar>("flux");
     this->gradient() = flux / D;

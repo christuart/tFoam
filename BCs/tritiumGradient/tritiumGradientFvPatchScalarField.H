@@ -102,9 +102,11 @@ private:
         scalarField delta_;
         
         //- Recalculated coefficient / [kg/m2s / (kg/m3)^0.74]
-		scalarField r_;
+        scalarField r_;
 		
-		const word DName_;
+        const word DName_;
+
+        scalar timeStoreLastUpdated;
 
 public:
 

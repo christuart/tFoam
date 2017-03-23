@@ -195,7 +195,7 @@ void Foam::tritiumGradientFvPatchScalarField::updateCoeffs()
     const label patchID = mesh.boundaryMesh().findPatchID(this->patch().name());
     flux = (r_ * pow(this->patchInternalField(),n_));
     const scalar timeStep = this->db().time().deltaTValue();
-    store = store - flux * mesh.magSf().boundaryField()[patchID] * timeStep;
+    store = store + flux * mesh.magSf().boundaryField()[patchID] * timeStep;
     //fvPatchField<scalar>& fluxField = 
     //    patch().lookupPatchField<volScalarField, scalar>("flux");
     this->gradient() = flux / D;

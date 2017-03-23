@@ -1,0 +1,4 @@
+#!/bin/bash
+
+sed -i -e "s=value=flux=g" [0-9][0-9]*/C_T
+sed -i -e "s=vvaalluuee=value=g" [0-9][0-9]*/C_T

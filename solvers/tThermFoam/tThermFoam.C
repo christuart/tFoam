@@ -67,7 +67,6 @@ int main(int argc, char *argv[])
 	fvScalarMatrix TEqn
 	(
 	    fvm::ddt(C_T)
-	  + lambda*C_T
 	  - fvm::laplacian(D, C_T)
 	);
 

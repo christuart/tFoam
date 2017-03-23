@@ -1,24 +1,5 @@
 Info<< "Reading transportProperties\n" << endl;
 
-IOdictionary transportProperties
-(
-    IOobject
-    (
-        "transportProperties",
-        runTime.constant(),
-        mesh,
-        IOobject::MUST_READ_IF_MODIFIED,
-        IOobject::NO_WRITE
-    )
-);
-
-dimensionedScalar lambda
-(
-    "lambda",
-    dimensionSet(0, 0, -1, 0, 0, 0, 0),
-    transportProperties.lookup("lambda")
-);
-
 #include "setGasConstant.H"
 
 Info<< "Reading field D\n" << endl;

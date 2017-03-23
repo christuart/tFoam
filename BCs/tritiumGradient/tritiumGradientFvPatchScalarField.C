@@ -84,7 +84,6 @@ Foam::tritiumGradientFvPatchScalarField::tritiumGradientFvPatchScalarField
     kappaLayers_()*/
     store(p.size(), 0.0),
     flux(p.size(), 0.0),
-    uniformGradient_(Function1<scalar>::New("uniformGradient", dict)),
     o_(p.size(), 0.0),
     n_(p.size(), 0.0),
     delta_(p.size(), 0.0),
@@ -190,9 +189,13 @@ void Foam::tritiumGradientFvPatchScalarField::updateCoeffs()
     //const fvPatchField<scalar>& pp =
     //    patch().lookupPatchField<volScalarField, scalar>(pName_);
         
+    const fvMesh& mesh = dimensionedInternalField().mesh();
     const fvPatchField<scalar>& D =
         patch().lookupPatchField<volScalarField, scalar>(DName_);
+    const label patchID = mesh.boundaryMesh().findPatchID(this->patch().name());
     flux = (r_ * pow(this->patchInternalField(),n_));
+    const scalar timeStep = this->db().time().deltaTValue();
+    store = store - flux * mesh.magSf().boundaryField()[patchID] * timeStep;
     //fvPatchField<scalar>& fluxField = 
     //    patch().lookupPatchField<volScalarField, scalar>("flux");
     this->gradient() = flux / D;

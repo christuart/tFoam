@@ -218,6 +218,9 @@ void Foam::tritiumGradientFvPatchScalarField::write(Ostream& os) const
     fixedGradientFvPatchField<scalar>::write(os);
 //    uniformGradient_->writeData(os);
     this->writeEntry("value", os);
+    o_.writeEntry("coefficient", os);
+    n_.writeEntry("exponent", os);
+    delta_.writeEntry("delta", os);
     flux.writeEntry("flux", os);
     store.writeEntry("store", os);
 }

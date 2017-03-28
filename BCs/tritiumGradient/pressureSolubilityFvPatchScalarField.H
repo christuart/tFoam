@@ -2,11 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
-    This file is part of tFoam, a project implemented using OpenFOAM.
+    This file is part of OpenFOAM.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
@@ -22,139 +22,107 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::tritiumGradientFvPatchScalarField
+    Foam::pressureSolubilityFvPatchScalarField
 
 Group
     grpGenericBoundaryConditions
 
 Description
-    This boundary condition provides a uniform fixed gradient condition.
+    This boundary condition supplies a fixed value constraint, and is the base
+    class for a number of other boundary conditions.
 
-Usage
+    \heading Patch usage
+
     \table
         Property     | Description             | Required    | Default value
-        uniformGradient | uniform gradient     | yes         |
+        value        | Patch face values       | yes         |
     \endtable
 
     Example of the boundary condition specification:
     \verbatim
-    <patchName>
+    myPatch
     {
-        type            tritiumGradient;
-        uniformGradient constant 0.2;
+        type            fixedValue;
+        value           uniform 0;  // example for scalar field usage
     }
     \endverbatim
 
-Note
-    The uniformGradient entry is a Function1 type, able to describe time
-    varying functions.  The example above gives the usage for supplying a
-    constant value.
-
-See also
-    Foam::Function1Types
-    Foam::fixedGradientFvPatchField
-
 SourceFiles
-    tritiumGradientFvPatchField.C
+    pressureSolubilityFvPatchScalarField.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef tritiumGradientFvPatchField_H
-#define tritiumGradientFvPatchField_H
+#ifndef pressureSolubilityFvPatchScalarField_H
+#define pressureSolubilityFvPatchScalarField_H
 
-#include "fixedGradientFvPatchFields.H"
-//#include "Function1.H"
+//#include "fvPatchField.H"
+#include "Random.H"
+#include "fixedValueFvPatchFields.H"
+//#include "InterpolationTable.H"
+#include "DataEntry.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-              Class tritiumGradientFvPatchScalarField Declaration
+                   Class pressureSolubilityFvPatchScalarField Declaration
 \*---------------------------------------------------------------------------*/
 
-class tritiumGradientFvPatchScalarField
+class pressureSolubilityFvPatchScalarField
 :
-    public fixedGradientFvPatchScalarField
+    public fixedValueFvPatchField<scalar>
 {
-public:
-
-    // Public data
-        
-        scalarField store;
-        scalarField flux;
 
 private:
-    // Private data
+        
+        //- External partial pressure / [Pa]
+        scalar p_;
 
-        //- Gradient
-//        autoPtr<Function1<scalar> > uniformGradient_;
-        
-        //- Outgassing Coefficient / [kg/m2s / (kg/m2)^0.74]
-        scalarField o_;
-        
-        //- Outgassing Exponent / [kg/m2s / kg/m3]
-        scalarField n_;
-        
-        //- Surface activity distance Delta / [m]
-        scalarField delta_;
-        
-        //- Recalculated coefficient / [kg/m2s / (kg/m3)^0.74]
-        scalarField r_;
-		
-        const word DName_;
+        //- Solubility / [kg/m3 / sqrt(Pa)]
+        scalar s_;
 
-        scalar timeStoreLastUpdated;
+        //- Current time index
+        label curTimeIndex_;
 
 public:
 
     //- Runtime type information
-    TypeName("tritiumGradient");
+    TypeName("pressureSolubility");
 
 
     // Constructors
 
         //- Construct from patch and internal field
-        tritiumGradientFvPatchScalarField
+        pressureSolubilityFvPatchScalarField
         (
             const fvPatch&,
             const DimensionedField<scalar, volMesh>&
         );
 
-		/*
-        //- Construct from patch and internal field and patch field
-        tritiumGradientFvPatchScalarField
-        (
-            const fvPatch&,
-            const DimensionedField<scalar, volMesh>&,
-            const scalarField& fld
-        );
-        */
-
         //- Construct from patch, internal field and dictionary
-        tritiumGradientFvPatchScalarField
+        pressureSolubilityFvPatchScalarField
         (
             const fvPatch&,
             const DimensionedField<scalar, volMesh>&,
             const dictionary&
         );
 
-        //- Construct by mapping given tritiumGradientFvPatchField
+        //- Construct by mapping the given pressureSolubilityFvPatchScalarField
         //  onto a new patch
-        tritiumGradientFvPatchScalarField
+        pressureSolubilityFvPatchScalarField
         (
-            const tritiumGradientFvPatchScalarField&,
+            const pressureSolubilityFvPatchScalarField&,
             const fvPatch&,
             const DimensionedField<scalar, volMesh>&,
             const fvPatchFieldMapper&
         );
 
         //- Construct as copy
-        tritiumGradientFvPatchScalarField
+        pressureSolubilityFvPatchScalarField
         (
-            const tritiumGradientFvPatchScalarField&
+            const pressureSolubilityFvPatchScalarField&
         );
 
         //- Construct and return a clone
@@ -162,14 +130,14 @@ public:
         {
             return tmp<fvPatchField<scalar> >
             (
-                new tritiumGradientFvPatchScalarField(*this)
+                new pressureSolubilityFvPatchScalarField(*this)
             );
         }
 
         //- Construct as copy setting internal field reference
-        tritiumGradientFvPatchScalarField
+        pressureSolubilityFvPatchScalarField
         (
-            const tritiumGradientFvPatchScalarField&,
+            const pressureSolubilityFvPatchScalarField&,
             const DimensionedField<scalar, volMesh>&
         );
 
@@ -181,18 +149,47 @@ public:
         {
             return tmp<fvPatchField<scalar> >
             (
-                new tritiumGradientFvPatchScalarField(*this, iF)
+                new pressureSolubilityFvPatchScalarField(*this, iF)
             );
         }
 
 
     // Member functions
 
-        //- Update the coefficients associated with the patch field
-        virtual void updateCoeffs();
+        // Access
+
+            //- Return amplitude
+            scalar pressure() const
+            {
+                return p_;
+            }
+
+            scalar& pressure()
+            {
+                return p_;
+            }
+
+            //- Return amplitude
+            scalar solubility() const
+            {
+                return s_;
+            }
+
+            scalar& solubility()
+            {
+                return s_;
+            }
+
+
+        // Evaluation functions
+
+            //- Update the coefficients associated with the patch field
+            virtual void updateCoeffs();
+
 
         //- Write
         virtual void write(Ostream&) const;
+
 };
 
 
@@ -203,7 +200,7 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #ifdef NoRepository
-    //#include "tritiumGradientFvPatchScalarField.C"
+//#   include "pressureSolubilityFvPatchScalarField.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

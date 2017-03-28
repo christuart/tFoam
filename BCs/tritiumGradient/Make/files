@@ -1,3 +1,4 @@
 tritiumGradientFvPatchScalarField.C
+pressureSolubilityFvPatchScalarField.C
 
 LIB = $(FOAM_USER_LIBBIN)/libTritBCs

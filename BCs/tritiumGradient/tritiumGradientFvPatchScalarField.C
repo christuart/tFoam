@@ -113,7 +113,7 @@ Foam::tritiumGradientFvPatchScalarField::tritiumGradientFvPatchScalarField
             << "\n for patch " << p.name()
 //            << " of field " << this->internalField().name()
 //            << " in file " << this->internalField().objectPath()
-            << "\n typical default values are: 1.23e-4; 0.74; 3e-10"
+            << "\n typical default values are: 1.3505e-7; 0.74; 3e-10"
             << exit(FatalError);
     }
 	Info << "This is what is re-evaluating" << endl;

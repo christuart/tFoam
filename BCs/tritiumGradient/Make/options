@@ -1,4 +1,4 @@
-EXE_INC = \
+EXE_INC_PRE = \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/transportModels/compressible/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
@@ -7,6 +7,12 @@ EXE_INC = \
     -I$(LIB_SRC)/thermophysicalModels/solidSpecie/lnInclude \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude \
+
+ifeq ($(WM_PROJECT_VERSION),3.0.1)
+    EXE_INC=-DUSING_OF30 $(EXE_INC_PRE)
+else
+    EXE_INC=$(EXE_INC_PRE)
+endif
 
 EXE_LIBS = \
     -lOpenFOAM \

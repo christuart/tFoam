@@ -194,7 +194,11 @@ void Foam::tritiumGradientFvPatchScalarField::updateCoeffs()
     //const fvPatchField<scalar>& pp =
     //    patch().lookupPatchField<volScalarField, scalar>(pName_);
         
+#ifdef USING_OF30
     const fvMesh& mesh = dimensionedInternalField().mesh();
+#else
+    const fvMesh& mesh = internalField().mesh();
+#endif
     const fvPatchField<scalar>& D =
         patch().lookupPatchField<volScalarField, scalar>(DName_);
     const label patchID = mesh.boundaryMesh().findPatchID(this->patch().name());

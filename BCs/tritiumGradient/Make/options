@@ -1,3 +1,9 @@
+ifeq ($(WM_PROJECT_VERSION),3.0.1)
+    MACRO_DEFINED=-DUSING_OF30
+else
+    MACRO_DEFINED=
+endif
+
 EXE_INC = \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/transportModels/compressible/lnInclude \

@@ -59,7 +59,9 @@ SourceFiles
 #include "Random.H"
 #include "fixedValueFvPatchFields.H"
 //#include "InterpolationTable.H"
+#ifdef USING_OF30
 #include "DataEntry.H"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

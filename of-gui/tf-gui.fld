@@ -1,0 +1,118 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0303 
+header_name {.h} 
+code_name {.cxx}
+class UserInterface {open
+} {
+  Function {make_window()} {open
+  } {
+    Fl_Window main_window {
+      label tFoam open
+      xywh {374 69 765 570} type Double color 38 align 13 hide size_range {765 570 765 570}
+    } {
+      Fl_Tabs {} {open
+        xywh {135 25 615 375} color 41 selection_color 41
+      } {
+        Fl_Group {} {
+          label Meshes open selected
+          xywh {145 50 605 350} color 41
+        } {
+          Fl_Tree {} {
+            xywh {155 70 130 270}
+          }
+          Fl_Group {} {
+            label {Mesh Preview} open
+            xywh {290 85 330 310} align 5
+          } {
+            Fl_Box {} {
+              image {mesh1.png} xywh {300 90 300 250} box THIN_DOWN_BOX color 41 align 64
+            }
+          }
+          Fl_Button {} {
+            label {Import Mesh}
+            xywh {613 85 125 40} color 41
+          }
+          Fl_Button {} {
+            label {New Mesh}
+            xywh {613 130 125 40} color 41
+          }
+          Fl_Button {} {
+            label {Open in GMSH}
+            xywh {300 355 120 35} color 41
+          }
+          Fl_Button {} {
+            label Duplicate
+            xywh {540 365 100 25} color 41
+          }
+          Fl_Button {} {
+            label Delete
+            xywh {645 365 100 25} color 41
+          }
+          Fl_Button {} {
+            label Reorganise
+            xywh {159 360 120 30} color 41
+          }
+          Fl_Button {} {
+            label {Scenario...}
+            xywh {425 355 100 35} color 41
+          }
+          Fl_Text_Display {} {
+            label Properties
+            xywh {610 204 130 137} color 41 align 5
+          }
+        }
+        Fl_Group {} {
+          label {Scenario Browser} open
+          xywh {135 50 615 260} color 41 hide
+        } {}
+        Fl_Group {} {
+          label {Scenario Editor} open
+          xywh {135 50 615 260} color 41 hide
+        } {}
+        Fl_Group {} {
+          label Results open
+          xywh {160 50 590 260} color 41 hide
+        } {}
+      }
+      Fl_Button {} {
+        label {Open
+Recent}
+        xywh {10 92 120 45} color 41 selection_color 40
+      }
+      Fl_Browser brwsr_run_output {
+        label {Console Output:}
+        xywh {10 409 748 123} color 44 align 5
+      }
+      Fl_Group grp_status_bar {open
+        xywh {5 537 757 28} box ENGRAVED_FRAME color 40 align 14
+      } {
+        Fl_Text_Display txdsp_status_bar {
+          xywh {9 541 749 19} box THIN_DOWN_FRAME color 37 textfont 13 textsize 11 deactivate
+        }
+      }
+      Fl_Button {} {
+        label {Materials
+Library}
+        xywh {10 144 120 45} color 41 selection_color 40
+      }
+      Fl_Box {} {
+        image {drawing1.png} xywh {20 15 100 50} labelcolor 55 align 512
+      }
+      Fl_Button {} {
+        label {Help!}
+        xywh {10 200 120 45} color 41 selection_color 40
+      }
+    }
+  }
+  Function {show()} {open
+  } {
+    code {make_window();
+//ChnButton[0]=Chn0;
+main_window->show();} {}
+  }
+  Function {start_showing_window()} {open
+  } {
+    code {Fl::scheme("gtk+");
+show();} {}
+  }
+} 

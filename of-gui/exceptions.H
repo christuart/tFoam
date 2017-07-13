@@ -4,7 +4,7 @@
 #include <exception>
 #include <stdexcept>
 namespace Errors {
-/*	class FutureImplementationException : public std::logic_error {
+	class FutureImplementationException : public std::logic_error {
 	public:
 		explicit FutureImplementationException(const std::string& what_arg):std::logic_error("Missing implementation: " + what_arg) {}
 	};
@@ -38,7 +38,7 @@ namespace Errors {
 	  explicit (const std::string& what_arg):std::logic_error("Problem type: " + what_arg) {}
 	  };
 	*/
-/*
+
 	class MissingInputDataException : public std::runtime_error {
 	public:
 		explicit MissingInputDataException(const std::string& what_arg):std::runtime_error("Missing input data: " + what_arg) {}
@@ -112,7 +112,7 @@ namespace Errors {
 	public:
 		explicit NotANeighbourException():std::runtime_error("Requested the neighbour of an element not belonging to the link.") {}
 	};
-*/	
+	
 	/*
 	  class  : public std::runtime_error {
 	  public:

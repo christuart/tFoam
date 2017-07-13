@@ -1,21 +1,25 @@
 # data file for the Fltk User Interface Designer (fluid)
 version 1.0303 
-header_name {.h} 
-code_name {.cxx}
+header_name {.H} 
+code_name {.C}
+decl {void userAction(Fl_Widget* target);} {public local
+} 
+
 class UserInterface {open
 } {
   Function {make_window()} {open
   } {
     Fl_Window main_window {
       label tFoam open
-      xywh {374 69 765 570} type Double color 38 align 13 hide size_range {765 570 765 570}
+      xywh {517 163 765 570} type Double color 38 align 13 size_range {765 570 765 570} visible
     } {
-      Fl_Tabs {} {open
-        xywh {135 25 615 375} color 41 selection_color 41
+      Fl_Tabs tab_main_tabs {
+        callback {userAction(tab_main_tabs);} open selected
+        xywh {135 25 615 375} color 41 selection_color 41 when 1
       } {
         Fl_Group {} {
-          label Meshes open selected
-          xywh {145 50 605 350} color 41
+          label Meshes open
+          xywh {145 50 605 350} color 41 hide
         } {
           Fl_Tree {} {
             xywh {155 70 130 270}
@@ -61,10 +65,30 @@ class UserInterface {open
             xywh {610 204 130 137} color 41 align 5
           }
         }
-        Fl_Group {} {
-          label {Scenario Browser} open
-          xywh {135 50 615 260} color 41 hide
-        } {}
+        Fl_Group grp_scenario_browser {
+          label {Scenario Browser}
+          callback {userAction(grp_scenario_browser);} open
+          xywh {135 50 615 335} color 41
+        } {
+          Fl_Tree tree_scenario_browser {
+            xywh {155 70 370 245}
+          }
+          Fl_Button btn_add_scenario_directory {
+            label {Add scenario directory...}
+            callback {userAction(btn_add_scenario_directory);}
+            xywh {155 355 200 30}
+          }
+          Fl_Button btn_remove_scenario_directory {
+            label {Remove directory}
+            callback {userAction(btn_remove_scenario_directory);}
+            xywh {365 355 160 30}
+          }
+          Fl_Button btn_load_refresh_scenarios {
+            label Load
+            callback {userAction(btn_load_refresh_scenarios);}
+            xywh {430 320 95 25} labelsize 12
+          }
+        }
         Fl_Group {} {
           label {Scenario Editor} open
           xywh {135 50 615 260} color 41 hide
@@ -74,9 +98,10 @@ class UserInterface {open
           xywh {160 50 590 260} color 41 hide
         } {}
       }
-      Fl_Button {} {
+      Fl_Button btn_open_recent {
         label {Open
 Recent}
+        callback {userAction(btn_open_recent);}
         xywh {10 92 120 45} color 41 selection_color 40
       }
       Fl_Browser brwsr_run_output {

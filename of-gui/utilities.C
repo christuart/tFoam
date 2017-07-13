@@ -1,4 +1,4 @@
-#include "utilities.hh"
+#include "utilities.H"
 
 /*===========================================================================*/
 void cSeparateValues(std::vector<std::string>& keys, std::string& text, std::string sep, std::string no){
@@ -220,4 +220,14 @@ bool get_file_exists(const std::string& filename)
 {
     struct stat buf;
     return (stat(filename.c_str(), &buf) != -1);
+}
+bool get_dir_exists(const std::string& dirname)
+{
+    struct stat buf;
+    if(stat( dirname.c_str(), &buf ) != 0)
+        return 0;
+    else if(buf.st_mode & S_IFDIR)
+        return 1;
+    else
+        return 0;
 }

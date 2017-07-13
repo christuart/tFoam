@@ -131,5 +131,6 @@ void ensure_ending(std::string& str, const std::string& suffix);
 void trim(std::string& str);
 std::string get_timestamp();
 bool get_file_exists(const std::string& filename);
+bool get_dir_exists(const std::string& dirname);
 
 #endif

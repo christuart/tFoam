@@ -1,31 +1,34 @@
 #include <time.h>
 #include <string>
-#include "tf-gui.h"
+#include "tf-gui.H"
 #include <iostream>
 #include <iomanip>
-#include "exceptions.hh"
-#include "utilities.hh"
-//#include "tds.hh"
+#include "exceptions.H"
+#include "utilities.H"
+#include "Reconstruct.H"
+#include "gui_backend.H"
+#include "messaging.H"
+#include "fvCFD.H"
 
 UserInterface* UI=NULL;
-//tds_display* tds=NULL;
+gui_backend* backend=NULL;
 //tds_batch* tds_b=NULL;
 //tds_run* tds_t=NULL;
 //tds_run* tds_r=NULL;
 void clear_pointers();
 
 // Global Message Buffers
-//MessageBuffer exceptions = MessageBuffer(MBUnhandledException, "EXCEPTION   ");
-//MessageBuffer warnings = MessageBuffer(MBWarnings, "WARNING     ");
-//DebugMessageBuffer debugging = DebugMessageBuffer(MBDebug, "DEBUG       ");
+MessageBuffer exceptions = MessageBuffer(MBUnhandledException, "EXCEPTION   ");
+MessageBuffer warnings = MessageBuffer(MBWarnings, "WARNING     ");
+DebugMessageBuffer debugging = DebugMessageBuffer(MBDebug, "DEBUG       ");
 // Global Message Listeners
-//standard_cout_listener console_out;
-//standard_cerr_listener console_err;
-//error_log_listener error_log;
+standard_cout_listener console_out;
+standard_cerr_listener console_err;
+error_log_listener error_log;
 
 /*===========================================================================*/
 // GUI (FLUID) INTERFACE PROCEDURES.
-//void userAction(Fl_Widget* sender){ tds->action(sender); }
+void userAction(Fl_Widget* sender){ backend->action(sender); }
 //void userAction(selection sel, Ca_Canvas *sender){ tds->action(sel,sender); }
 //selection as xmin,xmax,ymin,ymax
 //void mark_data_dirty(){ tds->mark_data_dirty(); }
@@ -48,12 +51,12 @@ int main(int nArg, char** vArg){
 		// 	std::cout << "Argument " << i+1 << ": " << cl[i].arg << std::endl;
 		// }
 
-		//console_out.error_listener(&console_err);
-		//console_err.out_listener(&console_out);
+		console_out.error_listener(&console_err);
+		console_err.out_listener(&console_out);
 		
-		//debugging.add_listener(&console_out);
-		//exceptions.add_listener(&console_err);
-		//warnings.add_listener(&console_err);
+		debugging.add_listener(&console_out);
+		exceptions.add_listener(&console_err);
+		warnings.add_listener(&console_err);
 		
 		int t = cl.flag("t|test");
 		int b = cl.flag("b|batch");
@@ -69,13 +72,13 @@ int main(int nArg, char** vArg){
 			if (v >= 0) {
 				try {
 					UI = new UserInterface(); UI->start_showing_window();
-//					tds = new tds_display(UI);
+					backend = new gui_backend(UI);
 					int err=Fl::run();
 					clear_pointers();
 					return err;
 				}
-//				catch (Errors::UIException& e) {
-				catch (std::runtime_error& e) {
+				catch (Errors::UIException& e) {
+//				catch (std::runtime_error& e) {
 					std::cerr << e.what() << std::endl;
 				}
 				clear_pointers();
@@ -111,13 +114,16 @@ void show_preamble() {
 	std::cout << "***" << std::endl;
 	std::cout << "************************************************************" << std::endl;
 	std::cout << "***" << std::endl;
-	std::cout << "***  trit-dif program written by Chris Stuart" << std::endl;
-	std::cout << "***  Supervised by Anthony Hollingsworth at CCFE" << std::endl;
+	std::cout << "***  of-gui - written by Chris Stuart for CCFE" << std::endl;
+	std::cout << "***  A simple GUI front end to OpenFOAM solvers written by Chris Stuart" << std::endl;
+	std::cout << "***  during a Masters project supervised by Dr Eugene Shwageraus of the" << std::endl;
+	std::cout << "***  University of Cambridge and Anthony Hollingsworth of the Tritium" << std::endl;
+	std::cout << "***  Engineering and Science Group in CCFE." << std::endl;
 	std::cout << "***" << std::endl;
 	std::cout << "***  This version: " << VERSION << std::endl;
 	std::cout << "***" << std::endl;
 	std::cout << "***  Find out more on the GitHub repository at " << std::endl;
-	std::cout << "***  http://github.com/christuart/trit-dif/" << std::endl;
+	std::cout << "***  http://github.com/christuart/tFoam/" << std::endl;
 	std::cout << "***" << std::endl;
 	std::cout << "************************************************************" << std::endl;
 	std::cout << "***" << std::endl;

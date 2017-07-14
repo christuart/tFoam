@@ -39,9 +39,13 @@ private:
 	file_handler* scenario_browser_config;
 	bool scenario_browser_is_prepared;
 	
+	std::string scenarioInUse;
+	bool scenarioIsLoaded;
+	
 private:
 	// actions
 	void open_test_case();
+	void select_scenario_from_browser();
 	// building GUI
 	void prepare_scenario_browser();
 	void add_scenario_directory(std::string dir_);

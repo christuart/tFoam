@@ -1,9 +1,9 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0303 
-header_name {.H} 
+version 1.0304
+header_name {.H}
 code_name {.C}
 decl {void userAction(Fl_Widget* target);} {public local
-} 
+}
 
 class UserInterface {open
 } {
@@ -14,7 +14,7 @@ class UserInterface {open
       xywh {517 163 765 570} type Double color 38 align 13 size_range {765 570 765 570} visible
     } {
       Fl_Tabs tab_main_tabs {
-        callback {userAction(tab_main_tabs);} open selected
+        callback {userAction(tab_main_tabs);} open
         xywh {135 25 615 375} color 41 selection_color 41 when 1
       } {
         Fl_Group {} {
@@ -71,6 +71,7 @@ class UserInterface {open
           xywh {135 50 615 335} color 41
         } {
           Fl_Tree tree_scenario_browser {
+            callback {userAction(tree_scenario_browser);}
             xywh {155 70 370 245}
           }
           Fl_Button btn_add_scenario_directory {
@@ -111,8 +112,8 @@ Recent}
       Fl_Group grp_status_bar {open
         xywh {5 537 757 28} box ENGRAVED_FRAME color 40 align 14
       } {
-        Fl_Text_Display txdsp_status_bar {
-          xywh {9 541 749 19} box THIN_DOWN_FRAME color 37 textfont 13 textsize 11 deactivate
+        Fl_Text_Display txdsp_status_bar {selected
+          xywh {9 541 749 19} box THIN_DOWN_FRAME color 37 textfont 13 textsize 11 textcolor 32 deactivate
         }
       }
       Fl_Button {} {
@@ -140,4 +141,4 @@ main_window->show();} {}
     code {Fl::scheme("gtk+");
 show();} {}
   }
-} 
+}

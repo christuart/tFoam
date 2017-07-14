@@ -28,7 +28,7 @@ void Subdirectory::scoutDirectory() {
 	char s[512];
 	//std::string escapedDir = find_replace(" ","\\ ",find_replace("\\ "," ",subdirectoryPath()));
 	std::string spaceEscapedDir = subdirectoryPath();
-	DEBUG(debugging,"::: " << subdirectoryPath());
+	//DEBUG(debugging,"::: " << subdirectoryPath());
 	std::string lsCommand = "cd \"" + spaceEscapedDir + "\"; ls -d */ 2>/dev/null";
 	//std::string lsCommand = "cd \"" + spaceEscapedDir + "\"; find * -maxdepth 0 -type d";
 	
@@ -49,11 +49,11 @@ void Subdirectory::scoutDirectory() {
 			const char *delim = "\t\n";
 			for(int t=0; (t==0)?(ss=strtok(s,delim)):(ss=strtok(NULL,delim)); t++) {
 				if (true || ss[0] != '/') {
-					if (caseDirs < 2) {
+					if (caseDirs < 3) {
 						char* newSubdirectoryChar = strdup(ss);
 						std::string newSubdirectoryString = std::string(newSubdirectoryChar);
 						trim(newSubdirectoryString);
-						DEBUG(debugging, "checking the string '" << newSubdirectoryString << "'");
+						//DEBUG(debugging, "checking the string '" << newSubdirectoryString << "'");
 						if (newSubdirectoryString == caseDir1 ||
 							newSubdirectoryString == caseDir2 ||
 							newSubdirectoryString == caseDir3)
@@ -81,7 +81,7 @@ void Subdirectory::scoutDirectory() {
 		pclose(fp);
 	}
 	treeItem()->user_data(new scenarioFolder(subdirectoryPath()));
-	if (caseDirs < 2) {
+	if (caseDirs < 3) {
 		for (std::vector<subdirectoryItem>::iterator it = contents_.begin(); it != contents_.end(); it++) {
 			it->second.insertItem(treeItem());
 			it->second.scoutDirectory();

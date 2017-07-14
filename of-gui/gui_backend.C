@@ -33,6 +33,8 @@ gui_backend::gui_backend(UserInterface *gui):GUI_(gui),scenario_browser_is_prepa
 	
 	// Construct config file handlers
 	scenario_browser_config = new file_handler(file_purpose::ReadFromFile,"config/scenariobrowser",file_buffer_mode::Closed);
+	
+	scenarioIsLoaded = false;
 }
 
 gui_backend::~gui_backend() {
@@ -42,26 +44,27 @@ void gui_backend::prepare_scenario_browser() {
 	// get a reference to the scenario browser tree widget
 	Fl_Tree* tree = GUI_->tree_scenario_browser;
 	tree->showroot(0); // don't show the root of the tree
+	tree->item_reselect_mode(Fl_Tree_Item_Reselect_Mode::FL_TREE_SELECTABLE_ALWAYS);
 	
 	// read the config file for the scenario browser to see which
 	// directories should be read
 	try {
 		if (scenario_browser_config->file_completed()) {
-			DEBUG(debugging,"Reopening scenariobrowser config.");
+			// DEBUG(debugging,"Reopening scenariobrowser config.");
 			delete(scenario_browser_config);
 			scenario_browser_config = new file_handler(file_purpose::ReadFromFile,"config/scenariobrowser",file_buffer_mode::Closed);
 		}
 		scenario_browser_config->read();
-		DEBUG(debugging,"Managed to read " << scenario_browser_config->lines_read() << " lines from scenariobrowser config.");
+		// DEBUG(debugging,"Managed to read " << scenario_browser_config->lines_read() << " lines from scenariobrowser config.");
 		tree->clear();
-		DEBUG(debugging,"Tree cleared.");
+		// DEBUG(debugging,"Tree cleared.");
 		for (int i=1; i <= scenario_browser_config->lines_read(); i++) {
-			DEBUG(debugging,"i = " << i);
-			DEBUG(debugging,"key[i] = " << scenario_browser_config->key(i));
-			DEBUG(debugging,"value[i] = " << scenario_browser_config->value(i));
-			DEBUG(debugging,i << " - " << scenario_browser_config->key(i) << " - " << scenario_browser_config->value(i));
+			// DEBUG(debugging,"i = " << i);
+			// DEBUG(debugging,"key[i] = " << scenario_browser_config->key(i));
+			// DEBUG(debugging,"value[i] = " << scenario_browser_config->value(i));
+			// DEBUG(debugging,i << " - " << scenario_browser_config->key(i) << " - " << scenario_browser_config->value(i));
 			if (scenario_browser_config->key(i) == "scenario-directory") {
-				DEBUG(debugging,"Adding scenario directory: " << scenario_browser_config->value(i));
+				LOG(gui_status,"Adding scenario directory: " << scenario_browser_config->value(i));
 				add_scenario_directory(scenario_browser_config->value(i));
 			}
 		}
@@ -135,18 +138,12 @@ void gui_backend::open_test_case() {
 	thisWord = "tritFoamGUI"; argv[i++] = thisWord;
 	thisWord = "-case"; argv[i++] = thisWord;
 	thisWord = "/home/cstuart/OpenFOAM/cstuart-4.0/run/tRegionFoam/openfoam-045/"; argv[i++] = thisWord;
-	DEBUG(debugging,"abc");
-	DEBUG(debugging, thisWord);
-	DEBUG(debugging,"ddddef");
 	Foam::argList args(argc, argv);
-	DEBUG(debugging,"def");
 	if (!args.checkRootCase())
 	{
 		Foam::FatalError.exit();
 	} else {
-		DEBUG(debugging,"ghi");
 		Foam::Time runTime(Foam::Time::controlDictName, args);
-		DEBUG(debugging,"jkl");
 		Foam::fvMesh mesh
 			(
 				Foam::IOobject
@@ -157,8 +154,8 @@ void gui_backend::open_test_case() {
 					Foam::IOobject::MUST_READ
 				)
 			);
-		DEBUG(debugging,"mno");
 		Foam::wordList dbNames = mesh.thisDb().names();
+		/*
 		DEBUG(debugging,dbNames.size());
 		for (int i = 0; i < dbNames.size(); ++i) {
 			DEBUG(debugging,dbNames[i]);
@@ -169,8 +166,84 @@ void gui_backend::open_test_case() {
 			DEBUG(debugging,dbNames[i]);
 		}
 		DEBUG(debugging,mesh.cellZones()[mesh.cellZones().findZoneID(dbNames[0])].name());
+		*/
 		Foam::jobInfo.clear();
 	}
+}
+
+void gui_backend::select_scenario_from_browser() {
+	
+	// First, we check whether the selected item was a case or not
+	scenarioFolder* selectedScenarioFolder = (scenarioFolder*)GUI_->tree_scenario_browser->callback_item()->user_data();
+	if (!selectedScenarioFolder->isScenario) {
+		// in that case it must be a folder, so we simply toggle open
+		GUI_->tree_scenario_browser->callback_item()->open_toggle();
+		return;
+	}
+	
+	std::string selectedScenarioPath = selectedScenarioFolder->fullPath;
+	
+	if (scenarioIsLoaded) {
+		// the current loaded scenario path is stored in scenarioInUse
+		if (scenarioInUse == selectedScenarioPath) {
+			LOG(gui_alerts,"Scenario selected but is already loaded.");
+			return;
+		} else {
+			Foam::jobInfo.clear();
+		}
+	}
+	
+	
+	// We now load the case using OpenFOAM classes. To do this, we have
+	// to provide what they would normally receive from the commandline:
+	int thisArgc = 3;
+	
+	std::vector<char*> argsVector;
+	argsVector.push_back("tritFoamGUI");
+	argsVector.push_back("-case");
+	argsVector.push_back((char*)selectedScenarioPath.c_str());
+	
+	char** thisArgv;
+	thisArgv = argsVector.data();
+	
+	LOG(gui_alerts,"Loading scenario: " << selectedScenarioPath);
+	// the Foam class spits out output without new lines that my message
+	// handling class expected, so I add some here
+	cout << std::endl << std::endl;
+	Foam::argList thisArgs(thisArgc, thisArgv);
+	
+	if (!thisArgs.checkRootCase())
+	{
+		LOG(gui_alerts,"Failed to load scenario into GUI: " << selectedScenarioPath);
+	} else {
+		Foam::Time runTime(Foam::Time::controlDictName, thisArgs);
+		Foam::fvMesh mesh
+			(
+				Foam::IOobject
+				(
+					Foam::fvMesh::defaultRegion,
+					runTime.timeName(),
+					runTime,
+					Foam::IOobject::MUST_READ
+				)
+			);
+		Foam::wordList dbNames = mesh.thisDb().names();
+		/*
+		DEBUG(debugging,dbNames.size());
+		for (int i = 0; i < dbNames.size(); ++i) {
+			DEBUG(debugging,dbNames[i]);
+		}
+		dbNames = mesh.cellZones().names();
+		DEBUG(debugging,dbNames.size());
+		for (int i = 0; i < dbNames.size(); ++i) {
+			DEBUG(debugging,dbNames[i]);
+		}
+		DEBUG(debugging,mesh.cellZones()[mesh.cellZones().findZoneID(dbNames[0])].name());
+		*/
+		Foam::jobInfo.clear();
+	}
+	scenarioIsLoaded = true;
+	scenarioInUse = selectedScenarioPath;
 }
 
 void gui_backend::action(Fl_Widget *sender){
@@ -189,7 +262,13 @@ void gui_backend::action(Fl_Widget *sender){
 	} else if (sender == GUI_->btn_load_refresh_scenarios) {
 		LOG(gui_actions, "Refreshing browser tab.");
 		prepare_scenario_browser();
+	} else if (sender == GUI_->tree_scenario_browser) {
+		if (GUI_->tree_scenario_browser->callback_reason() == FL_TREE_REASON_RESELECTED) {
+			LOG(gui_actions, "Double-clicked on scenario browser.");
+			select_scenario_from_browser();
+		}
 	}
+	
 	 /*else if (sender == GUI_->btn_save_run_file) {
 		LOG(gui_actions, "Saving run file.");
 		save_run_file();

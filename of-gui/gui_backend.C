@@ -18,7 +18,7 @@ gui_backend::gui_backend(UserInterface *gui):GUI_(gui),scenario_browser_is_prepa
 	
 	gui_console.browser(GUI_->brwsr_run_output);
 
-	// Prepare the tds_display messaging systems
+	// Prepare the tds_display messaging systemsc
 	//   - those stored in tds_display
 	gui_status.add_listener(&BStatusBar);
 	gui_status.add_listener(&console_out);
@@ -71,7 +71,11 @@ void gui_backend::prepare_scenario_browser() {
 	} catch(Errors::FileHandlerException e) {
 		LOG(warnings,"Could not open scenario browser config file: " << e.what());
 	}
-	// now fill in the info for the first available scenario
+	// now prepare the 'loaded scenario' fields
+	//GUI_->output_scenario_browser_name->buffer(BLoadedScenarioName);
+	//GUI_->output_scenario_browser_path->buffer(BLoadedScenarioPath);
+	
+	// All done
 	scenario_browser_is_prepared = true;
 }
 void gui_backend::add_scenario_directory(std::string dir_) {
@@ -86,40 +90,12 @@ void gui_backend::add_scenario_directory(std::string dir_) {
 	ensure_ending(dir_,"/");
 	std::string parsedDir = find_replace("/","\\/",dir_);
 	if (scenBrowser->find_item(parsedDir.c_str()) == NULL) {
+		
 		scenarioDirectory = scenBrowser->add(parsedDir.c_str());
 		scenarioDirectory->user_data(new scenarioFolder(dir_));
 		
 		sd = new Subdirectory(dir_,scenBrowser,scenarioDirectory,true,"");
 		
-		//~ DEBUG(debugging,"def");
-		
-		//~ char s[512];
-		//~ std::string lsCommand = "cd " + dir_ + "; ls -d */";
-		//~ DEBUG(debugging,lsCommand);
-		//~ FILE *fp = popen(lsCommand.c_str(), "r");
-		//~ //cols(0);
-		//~ for ( int r=0; fgets(s, sizeof(s)-1, fp); r++ ) {
-			//~ DEBUG(debugging,"abc" << r);
-			//~ // Add a new row
-			//~ //Row newrow; _rowdata.push_back(newrow);
-			//~ //std::vector<char*> &rc = _rowdata[r].cols;
-			//~ // Break line into separate word 'columns'
-			//~ char *ss;
-			//~ //std::string itemString;
-			//~ const char *delim = " \t\n";
-			//~ for(int t=0; (t==0)?(ss=strtok(s,delim)):(ss=strtok(NULL,delim)); t++) {
-				//~ DEBUG(debugging,"ttt" << t << " " << ss);
-				//~ //itemString = strdup(ss);
-				//~ //const Fl_Tree_Prefs defaultPrefs();
-				//~ //scenarioDirectory->add(scenarioDirectory->prefs(),strdup(ss),(Fl_Tree_Item*)(new SubdirectoryItem()));
-				//~ GUI_->tree_scenario_browser->add(scenarioDirectory,strdup(ss));
-			//~ }
-			//~ // Keep track of max # columns
-			//~ //if ( (int)rc.size() > cols() ) {
-			//~ //    cols((int)rc.size());
-			//~ //}
-		//~ }
-		//~ pclose(fp);
 	}
     // How many rows we loaded
     //rows((int)_rowdata.size()); 
@@ -216,7 +192,28 @@ void gui_backend::select_scenario_from_browser() {
 	{
 		LOG(gui_alerts,"Failed to load scenario into GUI: " << selectedScenarioPath);
 	} else {
+		// We're going to load the case, but first we'll populate a
+		// couple of fields we already know:
+		size_t lastSlash = selectedScenarioPath.find_last_of('/');
+		size_t secondLastSlash = selectedScenarioPath.find_last_of('/',lastSlash-1);
+		
+		
+		GUI_->output_scenario_browser_name->value(selectedScenarioPath.substr(secondLastSlash+1,lastSlash-1).c_str());
+		GUI_->output_scenario_browser_path->value(selectedScenarioPath.c_str());
+		
+		DEBUG(debugging,"oainsd");
 		Foam::Time runTime(Foam::Time::controlDictName, thisArgs);
+		DEBUG(debugging,"oiw3ho3t");
+		
+		fileNameList libNames(runTime.controlDict().lookup("libs"));
+		DEBUG(debugging,"892th");
+        forAll(libNames, i) {
+			DEBUG(debugging,"a " << i);
+            runTime.libs().close(libNames[i]);
+			DEBUG(debugging,"b " << i);
+        }
+		DEBUG(debugging,"cccccc");
+        
 		Foam::fvMesh mesh
 			(
 				Foam::IOobject
@@ -227,7 +224,20 @@ void gui_backend::select_scenario_from_browser() {
 					Foam::IOobject::MUST_READ
 				)
 			);
+		scalar deltaT = runTime.deltaTValue();
+		scalar endTime = runTime.endTime().value();
+		std::ostringstream oss;
+		oss << deltaT;
+		GUI_->output_scenario_browser_timestep->value(oss.str().c_str());
+		oss.str(""); oss << endTime;
+		GUI_->output_scenario_browser_final_time->value(oss.str().c_str());
+		
+		GUI_->brwsr_scenario_browser_mesh_regions->clear();
 		Foam::wordList dbNames = mesh.thisDb().names();
+		dbNames = mesh.cellZones().names();
+		for (int i = 0; i < dbNames.size(); ++i) {
+			GUI_->brwsr_scenario_browser_mesh_regions->add(dbNames[i].c_str());
+		}
 		/*
 		DEBUG(debugging,dbNames.size());
 		for (int i = 0; i < dbNames.size(); ++i) {
@@ -240,7 +250,7 @@ void gui_backend::select_scenario_from_browser() {
 		}
 		DEBUG(debugging,mesh.cellZones()[mesh.cellZones().findZoneID(dbNames[0])].name());
 		*/
-		Foam::jobInfo.clear();
+		//Foam::jobInfo.clear();
 	}
 	scenarioIsLoaded = true;
 	scenarioInUse = selectedScenarioPath;

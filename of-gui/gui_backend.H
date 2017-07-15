@@ -18,7 +18,8 @@ class gui_backend {
 private:
 	UserInterface *GUI_;
 	
-	//~ Fl_Text_Buffer BRunFileName,
+	//~ Fl_Text_Buffer BLoadedScenarioName,
+		//~ BLoadedScenarioPath;
 		//~ BRunFileContents,
 		//~ BModelDirectory,
 		//~ BModelName,

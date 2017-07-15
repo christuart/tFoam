@@ -26,6 +26,8 @@ standard_cout_listener console_out;
 standard_cerr_listener console_err;
 error_log_listener error_log;
 
+//Foam::Time runTime;
+
 /*===========================================================================*/
 // GUI (FLUID) INTERFACE PROCEDURES.
 void userAction(Fl_Widget* sender){ backend->action(sender); }

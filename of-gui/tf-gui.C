@@ -11525,22 +11525,44 @@ Fl_Double_Window* UserInterface::make_window() {
         } // Fl_Text_Display* o
         o->end();
       } // Fl_Group* o
-      { grp_scenario_browser = new Fl_Group(135, 50, 615, 335, "Scenario Browser");
+      { grp_scenario_browser = new Fl_Group(135, 50, 615, 345, "Scenario Browser");
         grp_scenario_browser->color((Fl_Color)41);
         grp_scenario_browser->callback((Fl_Callback*)cb_grp_scenario_browser);
-        { tree_scenario_browser = new Fl_Tree(155, 70, 370, 245);
+        { tree_scenario_browser = new Fl_Tree(155, 70, 360, 245);
           tree_scenario_browser->callback((Fl_Callback*)cb_tree_scenario_browser);
         } // Fl_Tree* tree_scenario_browser
         { btn_add_scenario_directory = new Fl_Button(155, 355, 200, 30, "Add scenario directory...");
           btn_add_scenario_directory->callback((Fl_Callback*)cb_btn_add_scenario_directory);
         } // Fl_Button* btn_add_scenario_directory
-        { btn_remove_scenario_directory = new Fl_Button(365, 355, 160, 30, "Remove directory");
+        { btn_remove_scenario_directory = new Fl_Button(365, 355, 150, 30, "Remove directory");
           btn_remove_scenario_directory->callback((Fl_Callback*)cb_btn_remove_scenario_directory);
         } // Fl_Button* btn_remove_scenario_directory
-        { btn_load_refresh_scenarios = new Fl_Button(430, 320, 95, 25, "Load");
+        { btn_load_refresh_scenarios = new Fl_Button(420, 320, 95, 25, "Load");
           btn_load_refresh_scenarios->labelsize(12);
           btn_load_refresh_scenarios->callback((Fl_Callback*)cb_btn_load_refresh_scenarios);
         } // Fl_Button* btn_load_refresh_scenarios
+        { grp_scenario_browser_loaded_scenario = new Fl_Group(530, 85, 205, 290, "Loaded Scenario");
+          grp_scenario_browser_loaded_scenario->box(FL_UP_FRAME);
+          { output_scenario_browser_name = new Fl_Output(540, 110, 185, 24, "Scenario name:");
+            output_scenario_browser_name->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Output* output_scenario_browser_name
+          { output_scenario_browser_path = new Fl_Output(540, 153, 185, 24, "Path:");
+            output_scenario_browser_path->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Output* output_scenario_browser_path
+          { output_scenario_browser_timestep = new Fl_Output(540, 196, 87, 24, "Timestep:");
+            output_scenario_browser_timestep->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Output* output_scenario_browser_timestep
+          { output_scenario_browser_final_time = new Fl_Output(637, 196, 88, 24, "Final time:");
+            output_scenario_browser_final_time->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Output* output_scenario_browser_final_time
+          { output_scenario_browser_mesh_name = new Fl_Output(540, 239, 185, 24, "Mesh name:");
+            output_scenario_browser_mesh_name->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Output* output_scenario_browser_mesh_name
+          { brwsr_scenario_browser_mesh_regions = new Fl_Browser(540, 282, 185, 84, "Mesh regions:");
+            brwsr_scenario_browser_mesh_regions->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          } // Fl_Browser* brwsr_scenario_browser_mesh_regions
+          grp_scenario_browser_loaded_scenario->end();
+        } // Fl_Group* grp_scenario_browser_loaded_scenario
         grp_scenario_browser->end();
       } // Fl_Group* grp_scenario_browser
       { Fl_Group* o = new Fl_Group(135, 50, 615, 260, "Scenario Editor");

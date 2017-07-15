@@ -11,6 +11,7 @@ extern void userAction(Fl_Widget* target);
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Text_Display.H>
+#include <FL/Fl_Output.H>
 #include <FL/Fl_Browser.H>
 
 class UserInterface {
@@ -47,6 +48,13 @@ private:
   inline void cb_btn_load_refresh_scenarios_i(Fl_Button*, void*);
   static void cb_btn_load_refresh_scenarios(Fl_Button*, void*);
 public:
+  Fl_Group *grp_scenario_browser_loaded_scenario;
+  Fl_Output *output_scenario_browser_name;
+  Fl_Output *output_scenario_browser_path;
+  Fl_Output *output_scenario_browser_timestep;
+  Fl_Output *output_scenario_browser_final_time;
+  Fl_Output *output_scenario_browser_mesh_name;
+  Fl_Browser *brwsr_scenario_browser_mesh_regions;
   Fl_Button *btn_open_recent;
 private:
   inline void cb_btn_open_recent_i(Fl_Button*, void*);

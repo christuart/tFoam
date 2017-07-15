@@ -14,7 +14,7 @@ class UserInterface {open
       xywh {517 163 765 570} type Double color 38 align 13 size_range {765 570 765 570} visible
     } {
       Fl_Tabs tab_main_tabs {
-        callback {userAction(tab_main_tabs);} open
+        callback {userAction(tab_main_tabs);} open selected
         xywh {135 25 615 375} color 41 selection_color 41 when 1
       } {
         Fl_Group {} {
@@ -68,11 +68,11 @@ class UserInterface {open
         Fl_Group grp_scenario_browser {
           label {Scenario Browser}
           callback {userAction(grp_scenario_browser);} open
-          xywh {135 50 615 335} color 41
+          xywh {135 50 615 345} color 41
         } {
           Fl_Tree tree_scenario_browser {
             callback {userAction(tree_scenario_browser);}
-            xywh {155 70 370 245}
+            xywh {155 70 360 245}
           }
           Fl_Button btn_add_scenario_directory {
             label {Add scenario directory...}
@@ -82,12 +82,41 @@ class UserInterface {open
           Fl_Button btn_remove_scenario_directory {
             label {Remove directory}
             callback {userAction(btn_remove_scenario_directory);}
-            xywh {365 355 160 30}
+            xywh {365 355 150 30}
           }
           Fl_Button btn_load_refresh_scenarios {
             label Load
             callback {userAction(btn_load_refresh_scenarios);}
-            xywh {430 320 95 25} labelsize 12
+            xywh {420 320 95 25} labelsize 12
+          }
+          Fl_Group grp_scenario_browser_loaded_scenario {
+            label {Loaded Scenario} open
+            xywh {530 85 205 290} box UP_FRAME
+          } {
+            Fl_Output output_scenario_browser_name {
+              label {Scenario name:}
+              xywh {540 110 185 24} align 5
+            }
+            Fl_Output output_scenario_browser_path {
+              label {Path:}
+              xywh {540 153 185 24} align 5
+            }
+            Fl_Output output_scenario_browser_timestep {
+              label {Timestep:}
+              xywh {540 196 87 24} align 5
+            }
+            Fl_Output output_scenario_browser_final_time {
+              label {Final time:}
+              xywh {637 196 88 24} align 5
+            }
+            Fl_Output output_scenario_browser_mesh_name {
+              label {Mesh name:}
+              xywh {540 239 185 24} align 5
+            }
+            Fl_Browser brwsr_scenario_browser_mesh_regions {
+              label {Mesh regions:}
+              xywh {540 282 185 84} align 5
+            }
           }
         }
         Fl_Group {} {
@@ -112,7 +141,7 @@ Recent}
       Fl_Group grp_status_bar {open
         xywh {5 537 757 28} box ENGRAVED_FRAME color 40 align 14
       } {
-        Fl_Text_Display txdsp_status_bar {selected
+        Fl_Text_Display txdsp_status_bar {
           xywh {9 541 749 19} box THIN_DOWN_FRAME color 37 textfont 13 textsize 11 textcolor 32 deactivate
         }
       }

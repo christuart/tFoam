@@ -198,21 +198,110 @@ void gui_backend::select_scenario_from_browser() {
 		size_t secondLastSlash = selectedScenarioPath.find_last_of('/',lastSlash-1);
 		
 		
-		GUI_->output_scenario_browser_name->value(selectedScenarioPath.substr(secondLastSlash+1,lastSlash-1).c_str());
+		GUI_->output_scenario_browser_name->value(selectedScenarioPath.substr(secondLastSlash+1,lastSlash-secondLastSlash).c_str());
 		GUI_->output_scenario_browser_path->value(selectedScenarioPath.c_str());
 		
+		Foam::fileName rootPath(selectedScenarioPath.substr(0,secondLastSlash+1));
+		DEBUG(debugging,rootPath);
+		Foam::fileName caseName(selectedScenarioPath.substr(secondLastSlash+1,lastSlash-secondLastSlash-1));
+		DEBUG(debugging,caseName);
+		Foam::word systemName("system");
+		
+		//~ Foam::Time runTime;
+		//~ Foam::IOobject controlDictNoLibs
+			//~ (
+				//~ IOobject
+				//~ (
+					//~ Foam::Time::controlDictName,
+					//~ systemName,
+					//~ runTime,
+					//~ IOobject::MUST_READ_IF_MODIFIED,
+					//~ IOobject::NO_WRITE,
+					//~ false
+				//~ )
+			//~ );
+		//~ controlDictNoLibs.remove("libs");
+		
 		DEBUG(debugging,"oainsd");
+		
+		// We are going to make temporary alterations to the controlDict
+		// file; I haven't found a good way of stopping libs("libabc")
+		// loading libabc every time I make a new Foam::Time. This would
+		// be fine if it didn't end up multiply defining methods/classes,
+		// but as it does do that we're going to hide "libs("libabc") by
+		// replacing it with "hiddenlibs("libac"). Hacky, but it works.
+		
+		// We'll need to do some command line work. Linux only!
+		FILE *fp;
+		
+		// First make sure that controlDict is clean of temporary alterations
+		std::string cleanHiddenOutCommandStub = "sed -i -e 's/hidden_l_i_b_s/libs/g' ";
+		fp = popen((cleanHiddenOutCommandStub + rootPath/caseName/systemName/"controlDict").c_str(), "r"); pclose(fp);
+		
+		// Now make a backup of the controlDict
+		std::ifstream  src1(rootPath/caseName/systemName/"controlDict", std::ios::binary);
+		std::ofstream  dst1(rootPath/caseName/systemName/"controlDictWithLibs",   std::ios::binary | std::ios::trunc);
+		dst1 << src1.rdbuf();
+		src1.close();
+		dst1.close();
+
+		// Now make the controlDict free of libs commands
+		std::string addHiddenInCommandStub = "sed -i -e 's/libs/hidden_l_i_b_s/g' ";
+		fp = popen((addHiddenInCommandStub + rootPath/caseName/systemName/"controlDict").c_str(), "r"); pclose(fp);
+		
 		Foam::Time runTime(Foam::Time::controlDictName, thisArgs);
+		
+		//~ Foam::Time* runTimePointer;
+		
+			//~ (
+				//~ *((dictionary*)new controlDictNoLibs
+					//~ (
+						//~ IOobject
+						//~ (
+							//~ Foam::Time::controlDictName,
+							//~ systemName,
+							//~ runTime,
+							//~ IOobject::MUST_READ_IF_MODIFIED,
+							//~ IOobject::NO_WRITE,
+							//~ true
+						//~ )
+					//~ )),
+				//~ rootPath,
+				//~ caseName
+			//~ );
+		//~ controlDictNoLibs cDNL(
+			//~ (
+				//~ IOobject
+				//~ (
+					//~ Foam::Time::controlDictName,
+					//~ systemName,
+					//~ *runTimePointer,
+					//~ IOobject::MUST_READ_IF_MODIFIED,
+					//~ IOobject::NO_WRITE,
+					//~ false
+				//~ )
+			//~ ));
+		//~ DEBUG(debugging,"oainsd");
+		//~ Foam::Time runTime
+			//~ (
+				//~ (Foam::dictionary)cDNL,
+				//~ rootPath,
+				//~ caseName
+			//~ );
+		//~ runTimePointer = &runTime;
+			
 		DEBUG(debugging,"oiw3ho3t");
 		
-		fileNameList libNames(runTime.controlDict().lookup("libs"));
-		DEBUG(debugging,"892th");
-        forAll(libNames, i) {
-			DEBUG(debugging,"a " << i);
-            runTime.libs().close(libNames[i]);
-			DEBUG(debugging,"b " << i);
-        }
-		DEBUG(debugging,"cccccc");
+		if (runTime.controlDict().found("libs")) {
+			fileNameList libNames(runTime.controlDict().lookup("libs"));
+			DEBUG(debugging,"892th");
+			forAll(libNames, i) {
+				DEBUG(debugging,"a " << i);
+				runTime.libs().close(libNames[i]);
+				DEBUG(debugging,"b " << i);
+			}
+			DEBUG(debugging,"cccccc");
+		}
         
 		Foam::fvMesh mesh
 			(
@@ -224,6 +313,14 @@ void gui_backend::select_scenario_from_browser() {
 					Foam::IOobject::MUST_READ
 				)
 			);
+			
+		// Now restore the controlDict
+		std::ifstream  src2(rootPath/caseName/systemName/"controlDictWithLibs", std::ios::binary);
+		std::ofstream  dst2(rootPath/caseName/systemName/"controlDict",   std::ios::binary | std::ios::trunc);
+		dst2 << src2.rdbuf();
+		src2.close();
+		dst2.close();
+		
 		scalar deltaT = runTime.deltaTValue();
 		scalar endTime = runTime.endTime().value();
 		std::ostringstream oss;

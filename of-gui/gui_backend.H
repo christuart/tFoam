@@ -11,6 +11,7 @@
 #include "fvCFD.H"
 #include "wordList.H"
 #include "JobInfo.H"
+#include "TimeNoLibs.H"
 
 extern MessageBuffer warnings;
 

@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    tVaryDecayFoam
+    tThermDecayFoam
 
 Description
     Transient solver for multi-zone tritium diffusion and radioactive decay,

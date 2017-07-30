@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    icoTempFoam
+    tDecayFoam
 
 Description
     Transient solver for incompressible, laminar flow of Newtonian fluids.
@@ -40,10 +40,7 @@ int main(int argc, char *argv[])
     #include "createTime.H"
     #include "createMesh.H"
 
-    //simpleControl simple(mesh);
-
     #include "createFields.H"
-    //#include "initContinuityErrs.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -53,33 +50,19 @@ int main(int argc, char *argv[])
     {
         Info<< "Time = " << runTime.timeName() << nl << endl;
 
-        //#include "CourantNo.H"
-
-
-        // --- PISO loop
-        //while (simple.correctNonOrthogonal())
         {
-            Info << "Running the solver loop!!!" << endl;
-            //#include "continuityErrs.H"
             fvScalarMatrix TEqn
             (
                 fvm::ddt(T)
               + lambda*T
               - fvm::laplacian(D, T)
             );
-            Info << "Got past the definition of TEqn" << endl;
             
             TEqn.relax();
             
-            Info << "Relaxed TEqn" << endl;
-            
             solve(TEqn);
             
-            Info << "Solved TEqn" << endl;
-            
             T.correctBoundaryConditions();
-            
-            Info << "Corrected boundary conditions for T" << endl;
         }
 
         runTime.write();

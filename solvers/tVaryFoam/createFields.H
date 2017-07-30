@@ -70,7 +70,7 @@ volScalarField T
     mesh
 );
 
-Info<< "Reading flux tracking fields store and flux\n" << endl;
+Info<< "Making flux tracking fields store and flux\n" << endl;
 volScalarField store
 (
     IOobject
@@ -97,8 +97,3 @@ volScalarField flux
     mesh,
     dimensionedScalar("flux", dimless, 0.0)
 );
-
-label C_TRefCell = 0;
-scalar C_TRefValue = 1.0;
-setRefCell(C_T, mesh.solutionDict().subDict("SIMPLE"), C_TRefCell, C_TRefValue);
-mesh.setFluxRequired(C_T.name());

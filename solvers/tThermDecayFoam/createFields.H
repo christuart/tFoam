@@ -137,8 +137,3 @@ volScalarField T
     ),
     mesh
 );
-
-label C_TRefCell = 0;
-scalar C_TRefValue = 1.0;
-setRefCell(C_T, mesh.solutionDict().subDict("SIMPLE"), C_TRefCell, C_TRefValue);
-mesh.setFluxRequired(C_T.name());

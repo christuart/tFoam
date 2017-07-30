@@ -33,8 +33,6 @@ Description
 #include "fvCFD.H"
 #include "simpleControl.H"
 #include "tritiumGradientFvPatchScalarField.H"
-//#include "GeometricField.H"
-//#include "GeometricBoundaryField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -40,3 +40,6 @@ SiCortex*Gcc*/
 solaris*Gcc*/
 SunOS*Gcc*/
 platforms/
+
+# runtime log files
+*.log

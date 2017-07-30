@@ -6,3 +6,5 @@ cd tRegionFoam ; wclean ; wmake ; cd ..
 cd tRegionDecayFoam ; wclean ; wmake ; cd ..
 cd tVaryFoam ; wclean ; wmake ; cd ..
 cd tVaryDecayFoam ; wclean ; wmake ; cd ..
+cd tThermFoam ; wclean ; wmake ; cd ..
+cd tThermDecayFoam ; wclean ; wmake ; cd ..
